@@ -1,0 +1,34 @@
+# Adjust the vertical spacing (height of rows) for better readability
+fig, ax = plt.subplots(figsize=(12, 8))  # Increase the height of the figure
+
+# Plot each day's activities with 30-minute resolution and increased row height
+row_height = 1.5  # Increase the spacing between rows
+for i, (day, activities) in enumerate(variable_schedule.items()):
+    for start, end, activity in activities:
+        start_float = time_to_float(start)
+        end_float = time_to_float(end)
+        ax.barh(i * row_height, end_float - start_float, left=start_float, 
+                color=activity_colors.get(activity, "gray"), edgecolor="black")
+
+# Set 30-minute interval ticks
+xticks = [h + m / 60 for h in range(24) for m in (0, 30)]
+xtick_labels = [f"{int(h)}:{str(int(m)).zfill(2)}" for h in range(24) for m in (0, 30)]
+ax.set_xticks(xticks)
+ax.set_xticklabels(xtick_labels, rotation=45, ha="right")
+
+# Set adjusted day labels
+ax.set_yticks([i * row_height for i in range(len(variable_schedule))])
+ax.set_yticklabels(variable_schedule.keys())
+
+# Add legend
+legend_handles = [mpatches.Patch(color=color, label=activity) for activity, color in activity_colors.items()]
+ax.legend(handles=legend_handles, bbox_to_anchor=(1.05, 1), loc='upper left', title="Activities")
+
+# Add title and labels
+ax.set_title("Weekly Schedule with 30-Minute Time Blocks and Wider Rows")
+ax.set_xlabel("Time")
+ax.set_ylabel("Days")
+
+plt.tight_layout()
+plt.show()
+
